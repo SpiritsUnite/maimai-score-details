@@ -6,7 +6,7 @@ Shows percent lost per note type in the score details section in maimai DX NET.
 
 ## How to use
 
-(View this from <https://spiritsunite.github.io/maimai-score-details/>)
+(View this page from <https://spiritsunite.github.io/maimai-score-details/>)
 
 1. Bookmark this link by dragging the link to the bookmarks bar: [maimai score details](javascript:void(function(){if(['maimaidx-eng.com','maimaidx.jp'].indexOf(document.location.host)>=0&&(document.location.pathname.indexOf('/maimai-mobile/record/playlogDetail')>=0))document.body.appendChild(document.createElement('script')).src='https://spiritsunite.github.io/maimai-score-details/score-details.js'})();).
 2. Go to a score page in maimai DX NET.

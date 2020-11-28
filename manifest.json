@@ -1,0 +1,14 @@
+{
+    "manifest_version": 2,
+    "name": "Maimai Score Details",
+    "version": "1.0",
+  
+    "description": "Shows percentage lost per score type on maimai-dx",
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.maimaidx-eng.com/maimai-mobile/record/playlogDetail/*"],
+        "js": ["score-details.js"]
+      }
+    ]
+}

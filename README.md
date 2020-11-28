@@ -6,6 +6,6 @@ Shows percent lost per note type in the score details section in maimai DX NET.
 
 ## How to use
 
-1. Bookmark [this link](javascript:void(function(){document.body.appendChild(document.createElement('script')).src='https://spiritsunite.github.io/maimai-score-details/score-details.js'})();)
+1. Bookmark this link: [maimai score details](javascript:void(function(){if(['maimaidx-eng.com','maimaidx.jp'].indexOf(document.location.host)>=0&&(d.location.pathname.indexOf('/maimai-mobile/record/playlogDetail')>=0))document.body.appendChild(document.createElement('script')).src='https://spiritsunite.github.io/maimai-score-details/score-details.js'})();).
 2. Go to a score page in maimai DX NET.
 3. Open the bookmark on the page.

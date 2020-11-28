@@ -10,6 +10,9 @@ function sum(arr) {
 }
 
 const table = document.querySelector('.playlog_notes_detail');
+if (!table) {
+	throw new Error("Could not find score details table");
+}
 const rows = x => table.rows[x].innerText.split('\t').map(toInt);
 const total = sum(rows(1)) + 2*sum(rows(2)) + 3*sum(rows(3)) + sum(rows(4)) + 5*sum(rows(5));
 

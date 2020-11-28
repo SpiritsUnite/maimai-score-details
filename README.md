@@ -4,6 +4,10 @@ Shows percent lost per note type in the score details section in maimai DX NET.
 
 ![Example](screenshot.png)
 
+The percentages show how much was lost from 101%. Perfect breaks have two timing
+windows and great breaks have three, so this shows the min/max possible loss for
+each.
+
 ## How to use
 
 (View this page from <https://spiritsunite.github.io/maimai-score-details/>)

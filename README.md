@@ -16,4 +16,6 @@ each.
 2. Go to a score page in maimai DX NET.
 3. Open the bookmark on the page.
 
-Chrome/Firefox extension also coming soon™.
+Alternatively, if you use Firefox, you can just install the extension: <https://addons.mozilla.org/en-US/firefox/addon/maimai-score-details/>
+
+Chrome extension also coming soon™.

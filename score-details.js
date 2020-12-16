@@ -9,44 +9,49 @@ function sum(arr) {
 	return ret;
 }
 
+function format_percent(num) {
+	return `<span title="${num.toFixed(4)}%">${num.toFixed(2)}%</span>`;
+}
+
 const table = document.querySelector('.playlog_notes_detail');
 if (!table) {
 	throw new Error("Could not find score details table");
 }
-const rows = x => table.rows[x].innerText.split('\t').map(toInt);
-const total = sum(rows(1)) + 2*sum(rows(2)) + 3*sum(rows(3)) + sum(rows(4)) + 5*sum(rows(5));
 
-const base = 100/total;
-let loss = 0;
+for (let i = 1; i <= 5; i++) {
+	table.rows[i].cells[0].classList.remove("f_0");
+}
+const grid = Array.from(table.rows, r => r.innerText.split('\t').map(toInt));
 
-function append(r, c, f) {
-	let v = toInt(table.rows[r].cells[c].innerText);
-	if (!v) return;
-	table.rows[r].cells[c].innerText += f(v);
+function append(r, c, v) {
+	const p = document.createElement("p");
+	p.innerHTML = v;
+	p.classList.add("maimai-detail-text");
+	table.rows[r].cells[c].appendChild(p);
 }
 
-const modify = (r, c, f) => append(r, c, v => {
-	let num = f(v);
-	loss += num;
-	return ` (${(-num).toFixed(4)}%)`;
-});
-let break_row = rows(5);
-let num_breaks = sum(break_row);
+const total = sum(grid[1]) + 2*sum(grid[2]) + 3*sum(grid[3]) + sum(grid[4]) + 5*sum(grid[5]);
+const base = 100/total;
 
-modify(1, 3, v => base/5*v);
-modify(1, 4, v => base/2*v);
-modify(1, 5, v => base*v);
-modify(2, 3, v => 2*base/5*v);
-modify(2, 4, v => 2*base/2*v);
-modify(2, 5, v => 2*base*v);
-modify(3, 3, v => 3*base/5*v);
-modify(3, 4, v => 3*base/2*v);
-modify(3, 5, v => 3*base*v);
-modify(4, 3, v => base/5*v);
-modify(4, 4, v => base/2*v);
-modify(4, 5, v => base*v);
-modify(5, 4, v => (5*base*3/5+.7/num_breaks)*v);
-modify(5, 5, v => (5*base + 1/num_breaks)*v);
+let losses = Array.from(Array(6), () => Array(6).fill(0));
+for (let r = 1; r <= 4; r++) {
+	const factor = r == 4 ? 1 : r;
+	losses[r][3] = factor*grid[r][3]*base/5;
+	losses[r][4] = factor*grid[r][4]*base/2;
+	losses[r][5] = factor*grid[r][5]*base;
+}
+const break_row = grid[5];
+const num_breaks = sum(break_row);
+losses[5][4] = grid[5][4]*(3*base + .7/num_breaks);
+losses[5][5] = grid[5][5]*(5*base + 1/num_breaks);
+const loss = sum(losses.map(sum));
+
+for (let r = 1; r <= 5; r++) {
+	for (let c = 3; c <= 5; c++) {
+		const v = losses[r][c];
+		if (v > 0) append(r, c, `(${format_percent(-v)})`);
+	}
+}
 
 const p = parseFloat(document.querySelector('.playlog_achievement_txt').innerText);
 const min_ploss = .25/num_breaks*break_row[2];
@@ -55,20 +60,33 @@ const max_ploss = .5/num_breaks*break_row[2];
 const max_gloss = (5*base/2+.6/num_breaks)*break_row[3];
 const rem = 101 - loss - p;
 
-append(5, 2, () => {
-	const mi = -Math.max(min_ploss, rem - max_gloss);
-	const ma = -Math.min(max_ploss, rem - min_gloss);
-	if (Math.abs(ma - mi) < 1e-8) {
-		return ` (${mi.toFixed(4)}%)`;
-	}
-	return ` (${mi.toFixed(4)}%~ ${ma.toFixed(4)}%)`;
-});
+if (break_row[2] > 0) {
+	append(5, 2, (() => {
+		const mi = -Math.max(min_ploss, rem - max_gloss);
+		const ma = -Math.min(max_ploss, rem - min_gloss);
+		if (Math.abs(ma - mi) < 1e-4) {
+			return ` (${format_percent(mi)})`;
+		}
+		return ` (${format_percent(mi)}~ ${format_percent(ma)})`;
+	})());
+}
 
-append(5, 3, () => {
-	const mi = -Math.max(min_gloss, rem - max_ploss);
-	const ma = -Math.min(max_gloss, rem - min_ploss);
-	if (Math.abs(ma - mi) < 1e-8) {
-		return ` (${mi.toFixed(4)}%)`;
-	}
-	return ` (${mi.toFixed(4)}%~ ${ma.toFixed(4)}%)`;
-});
+if (break_row[3] > 0) {
+	append(5, 3, (() => {
+		const mi = -Math.max(min_gloss, rem - max_ploss);
+		const ma = -Math.min(max_gloss, rem - min_ploss);
+		if (Math.abs(ma - mi) < 1e-4) {
+			return ` (${format_percent(mi)})`;
+		}
+		return ` (${format_percent(mi)}~ ${format_percent(ma)})`;
+	})());
+}
+
+for (let r = 1; r <= 4; r++) {
+	const factor = r == 4 ? 1 : r;
+	const total = sum(grid[r])*factor*base;
+	if (total == 0) continue;
+	append(r, 0, `-${format_percent(sum(losses[r]))}/${format_percent(total)}`);
+}
+const break_total = sum(grid[5])*5*base;
+append(5, 0, `-${format_percent(sum(losses[5])+rem)}/${format_percent(break_total)}`);

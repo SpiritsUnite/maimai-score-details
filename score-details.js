@@ -17,6 +17,7 @@ const table = document.querySelector('.playlog_notes_detail');
 if (!table) {
 	throw new Error("Could not find score details table");
 }
+table.style.width = "100%";
 
 for (let i = 1; i <= 5; i++) {
 	table.rows[i].cells[0].classList.remove("f_0");
@@ -67,7 +68,7 @@ if (break_row[2] > 0) {
 		if (Math.abs(ma - mi) < 1e-4) {
 			return ` (${format_percent(mi)})`;
 		}
-		return ` (${format_percent(mi)}~ ${format_percent(ma)})`;
+		return ` (${format_percent(mi)}~<br>${format_percent(ma)})`;
 	})());
 }
 
@@ -78,15 +79,18 @@ if (break_row[3] > 0) {
 		if (Math.abs(ma - mi) < 1e-4) {
 			return ` (${format_percent(mi)})`;
 		}
-		return ` (${format_percent(mi)}~ ${format_percent(ma)})`;
+		return ` (${format_percent(mi)}~<br>${format_percent(ma)})`;
 	})());
 }
 
-for (let r = 1; r <= 4; r++) {
+for (let r = 1; r <= 5; r++) {
 	const factor = r == 4 ? 1 : r;
-	const total = sum(grid[r])*factor*base;
+	let total = sum(grid[r])*factor*base;
+	let v = sum(losses[r]);
+	if (r == 5) {
+		v += rem;
+		total += 1;
+	}
 	if (total == 0) continue;
-	append(r, 0, `-${format_percent(sum(losses[r]))}/${format_percent(total)}`);
+	append(r, 0, `-${format_percent(v)} (${format_percent(total)})`);
 }
-const break_total = sum(grid[5])*5*base;
-append(5, 0, `-${format_percent(sum(losses[5])+rem)}/${format_percent(break_total)}`);

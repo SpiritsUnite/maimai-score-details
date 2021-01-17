@@ -26,6 +26,8 @@ const grid = Array.from(table.rows, r => r.innerText.split('\t').map(toInt));
 
 function append(r, c, v) {
 	const p = document.createElement("p");
+	// Safe because v is either hard-coded text or from format_percent() which
+	// only works on numbers.
 	p.innerHTML = v;
 	p.classList.add("maimai-detail-text");
 	table.rows[r].cells[c].appendChild(p);
@@ -66,9 +68,9 @@ if (break_row[2] > 0) {
 		const mi = -Math.max(min_ploss, rem - max_gloss);
 		const ma = -Math.min(max_ploss, rem - min_gloss);
 		if (Math.abs(ma - mi) < 1e-4) {
-			return ` (${format_percent(mi)})`;
+			return `(${format_percent(mi)})`;
 		}
-		return ` (${format_percent(mi)}~<br>${format_percent(ma)})`;
+		return `(${format_percent(mi)}~<br>${format_percent(ma)})`;
 	})());
 }
 
@@ -77,9 +79,9 @@ if (break_row[3] > 0) {
 		const mi = -Math.max(min_gloss, rem - max_ploss);
 		const ma = -Math.min(max_gloss, rem - min_ploss);
 		if (Math.abs(ma - mi) < 1e-4) {
-			return ` (${format_percent(mi)})`;
+			return `(${format_percent(mi)})`;
 		}
-		return ` (${format_percent(mi)}~<br>${format_percent(ma)})`;
+		return `(${format_percent(mi)}~<br>${format_percent(ma)})`;
 	})());
 }
 

@@ -72,6 +72,10 @@ for (let r = 1; r <= 5; r++) {
 let closest = null;
 let closest_break = null;
 let next_closest = null;
+// Sometimes all solutions have the same perfect breakdown, but different great
+// breakdowns, so this tracks the closest solution that has a different perfect
+// breakdown.
+let next_perfect = null;
 for (let gp = 0; gp <= break_row[2]; gp++) {
 for (let gg = 0; gg <= break_row[3]; gg++) {
 for (let mg = 0; mg <= break_row[3] - gg; mg++) {
@@ -82,24 +86,37 @@ for (let mg = 0; mg <= break_row[3] - gg; mg++) {
 				(5*base*.4+.6/num_breaks)*mg +
 				(5*base/2+.6/num_breaks)*bg;
 	if (closest === null || Math.abs(bloss - rem) < closest) {
+		if (closest != null && closest_break[0] != gp) {
+			next_perfect = closest;
+		}
 		next_closest = closest;
 		closest = Math.abs(bloss - rem);
 		closest_break = [gp, bp, gg, mg, bg];
-	} else if (next_closest === null || Math.abs(bloss - rem) < next_closest) {
-		next_closest = Math.abs(bloss - rem);
+	} else {
+		if (next_closest === null || Math.abs(bloss - rem) < next_closest) {
+			next_closest = Math.abs(bloss - rem);
+		}
+		if (closest_break[0] != gp &&
+				(next_perfect === null || Math.abs(bloss - rem) < next_perfect)) {
+			next_perfect = Math.abs(bloss - rem);
+		}
 	}
 }
 }
 }
 
-if (next_closest === null || next_closest > 0.00015) {
+if (next_perfect === null || next_perfect > 0.00015) {
 	const [gp, bp, gg, mg, bg] = closest_break;
 	const ploss = -(gp/4 + bp/2)/num_breaks;
 	if (break_row[2] > 0) {
 		append(5, 2, `&nbsp;(${gp},${bp})<br>(${format_percent(ploss)})`);
 	}
 	if (break_row[3] > 0) {
-		append(5, 3, `&nbsp;(${gg},${mg},${bg})<br>(${format_percent(-rem - ploss)})`);
+		if (next_closest === null || next_closest > 0.00015) {
+			append(5, 3, `&nbsp;(${gg},${mg},${bg})<br>(${format_percent(-rem - ploss)})`);
+		} else {
+			append(5, 3, `<br>(${format_percent(-rem - ploss)})`);
+		}
 	}
 } else {
 	const min_ploss = .25/num_breaks*break_row[2];
